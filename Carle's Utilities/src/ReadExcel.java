@@ -7,21 +7,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 
 public class ReadExcel {
-	//public static void main (String[] args) throws IOException {
-		
 
-		
-//  jxl code
-//		Workbook wb = Workbook.getWorkbook((new File("Carle ITL.xls")));
-//		System.out.println(wb.getSheet(0).getRows());
-//		for (int i = 2; i < wb.getSheet(0).getRows(); i++) {
-//			System.out.println(wb.getSheet(0).getCell(2, i).getContents() + " - " + wb.getSheet(0).getCell(3, i).getContents());
-//			System.out.println(wb.getSheet(0).getCell(5, i).getContents());
-//		}
-//		
-		
-		
-	//}
 	
 	@SuppressWarnings("deprecation")
 	public static Date loadData(FileInputStream file, HashSet <Task> loadedTasks) throws Exception {
