@@ -14,7 +14,6 @@ public class TBAGraph extends JPanel implements ActionListener{
 	private ProgressBar graphPanel = new ProgressBar ();
 	
 	public TBAGraph(Employee emp) throws FileNotFoundException {
-		super();
 		this.emp = emp;
 		addInfo();
 		addGraph();

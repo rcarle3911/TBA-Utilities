@@ -7,7 +7,6 @@ public class ProgressBar extends JPanel {
 	JPanel pBPnl = new JPanel ();
 	
 	public ProgressBar () {
-		super();
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		namePnl.setLayout(new BoxLayout(namePnl, BoxLayout.Y_AXIS));
 		pBPnl.setLayout(new BoxLayout(pBPnl, BoxLayout.Y_AXIS));

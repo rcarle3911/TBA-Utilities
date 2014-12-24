@@ -10,6 +10,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.filechooser.*;
+import javax.swing.GroupLayout.Alignment;
 
 @SuppressWarnings("serial")
 public class TBAGUI extends JFrame{
@@ -18,21 +19,60 @@ public class TBAGUI extends JFrame{
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				TBAGUI gui = new TBAGUI();
-				gui.setTitle("Carle's TBA Tool");
-				gui.getContentPane().setLayout(new BoxLayout(gui.getContentPane(), BoxLayout.PAGE_AXIS));
-				gui.setSize(400,800);
-				gui.setVisible(true);
-				gui.setLocationRelativeTo(null);
-				gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				gui.addButtonPanel();
-				gui.add(Box.createHorizontalBox());
+				
 			}
 		});
 	
 	}
 		
-	public TBAGUI () {
-	
+	public TBAGUI () {		
+		setTitle("Carle's TBA Tool");
+		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+		setSize(400,800);
+		setVisible(true);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);			
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu mnFile = new JMenu("File");
+		menuBar.add(mnFile);
+		
+		JMenuItem mntmLoadEmployee = new JMenuItem("Load Employee");
+		mntmLoadEmployee.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					JFileChooser fc = new JFileChooser("./");
+					fc.setFileFilter(new FileNameExtensionFilter("xls", "xlsx"));
+					fc.showOpenDialog((Component) e.getSource());
+					if (fc.getSelectedFile() != null) {
+						addEmployee(fc.getSelectedFile());
+					}				
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		mnFile.add(mntmLoadEmployee);
+		
+		JMenuItem mntmLoadTaskGroup = new JMenuItem("Load Task Group");
+		mnFile.add(mntmLoadTaskGroup);
+		
+		JMenuItem mntmLoadDirectory = new JMenuItem("Load Directory");
+		mnFile.add(mntmLoadDirectory);
+		
+		JMenuItem mntmExit = new JMenuItem("Exit");
+		mntmExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		mnFile.add(mntmExit);
+		
+		JMenu mnAbout = new JMenu("About");
+		menuBar.add(mnAbout);
 	}
 		
 	public void update() {
@@ -45,7 +85,7 @@ public class TBAGUI extends JFrame{
 			JPanel empGraph = emp.createGraph();
 			empGraph.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));
 			empGraph.add(delBtn());
-			add(empGraph);
+			getContentPane().add(empGraph);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,43 +107,5 @@ public class TBAGUI extends JFrame{
 		});
 		
 		return delete;
-	}
-	
-	public void addButtonPanel() {
-		JPanel btnPnl = new JPanel();
-			
-		JButton load = new JButton("Load Employee");
-		load.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				try {
-					JFileChooser fc = new JFileChooser("./");
-					fc.setFileFilter(new FileNameExtensionFilter("xls", "xlsx"));
-					fc.showOpenDialog((Component) e.getSource());
-					if (fc.getSelectedFile() != null) {
-						addEmployee(fc.getSelectedFile());
-					}				
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}			
-			}
-		});
-		
-		JButton exit = new JButton("Exit");
-		exit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		
-		btnPnl.add(load);
-		//btnPnl.add(delete);
-		btnPnl.add(exit);		
-		add(btnPnl);
-		
-	}
-	
-	
+	}		
 }
