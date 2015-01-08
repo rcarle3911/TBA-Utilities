@@ -1,5 +1,3 @@
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.*;
 
 public class Task {
@@ -9,8 +7,8 @@ public class Task {
 				   taskNum = productName, 
 				   taskDesc = productName, 
 				   trainer = productName, 
-				   employeeName = productName, 
-				   groupID = productName;
+				   employeeName = productName;
+				   
 	
 	private Date complDate;
 	
@@ -18,9 +16,9 @@ public class Task {
 		this.employeeName = employeeName;
 	}
 	
-	public void setGroupID (String groupID) {
-		this.groupID = groupID;
-	}
+	//public void setGroupID (String groupID) {
+	//	this.groupID = groupID;
+	//}
 	
 	public void setProductName (String productName) {
 		this.productName = productName;
@@ -46,9 +44,9 @@ public class Task {
 		return employeeName;
 	}
 	
-	public String getGroupID () {
-		return groupID;
-	}
+	//public String getGroupID () {
+	//	return groupID;
+	//}
 	
 	public String getProductName () {
 		return productName;
@@ -69,13 +67,7 @@ public class Task {
 	public Date getComplDate () {
 		return complDate;
 	}
-	
-	public static HashSet <Task> buildTaskList(FileInputStream file) throws Exception {
-		HashSet <Task> taskList = new HashSet <Task> ();
-		ReadExcel.loadData(file, taskList);
-		return taskList;
-	}
-	
+
 	@Override
 	public boolean equals(Object task) {
 		return (this.productName.equals(((Task)task).getProductName()) && this.taskNum.equals(((Task)task).getTaskNum()));		
@@ -89,7 +81,7 @@ public class Task {
 	@Override
 	public String toString() {
 		return getEmployeeName() + " \n" +
-				getGroupID() + "\n" +
+				//getGroupID() + "\n" +
 				getProductName() + "\n" +
 				getTaskNum() + "\n" +
 				getTaskDesc() + "\n" +

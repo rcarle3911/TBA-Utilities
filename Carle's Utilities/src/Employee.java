@@ -14,21 +14,23 @@ public class Employee {
 	//Variables
 	private String name;
 	private int emplID, breakInTrng;
-	private HashSet <Task> loadedTasks = new HashSet <Task> ();
-	private HashSet <String> roles = new HashSet <String> ();
+	private TaskGroup loadedTasks = new TaskGroup();
 	private Date dateEnteredUGT;
 	private Date datePrepared;
 	
 	//Constructors
 	public Employee() {
 		dateEnteredUGT = new Date();
-		roles.add("Trainee");
 	}
 	
 	public Employee(File inputFile) throws Exception {
-		datePrepared = readExcel(inputFile);
-		setName(loadedTasks.iterator().next().getEmployeeName());
-		roles.add("Trainee");
+		FileInputStream inputStream = new FileInputStream(inputFile);		
+		datePrepared = loadedTasks.loadFile(inputStream);
+		setName(loadedTasks.tg.iterator().next().getEmployeeName());
+	}
+	
+	public Employee(TaskGroup loadedTasks) {
+		this.loadedTasks = loadedTasks;
 	}
 	
 	public Employee(String name) {
@@ -46,25 +48,30 @@ public class Employee {
 		this.dateEnteredUGT = dateEnteredUGT;
 	}
 	
+	public Employee(Task task) {
+		this(task.getEmployeeName());
+		loadedTasks.tg.add(task);
+	}
+	
 	//Methods
 	//Calculates and returns percentage.
 	public float calcPerc() {
 		return calcPerc(loadedTasks);
 	}
 	
-	public float calcPerc(HashSet <Task> taskList) {
+	public float calcPerc(TaskGroup taskList) {
 		return calcPerc(taskList, loadedTasks);
 	}
 	
-	public int calcComp(HashSet <Task> taskList) {
+	public int calcComp(TaskGroup taskList) {
 		return calcComp(taskList, loadedTasks);
 	}
 	
-	public int calcComp(HashSet <Task> taskList, HashSet <Task> loadedTasks) {
+	public int calcComp(TaskGroup taskList, TaskGroup loadedTasks) {
 		int count = 0;
 		
-		for (Task s : loadedTasks) {
-			if (s.getComplDate() != null && taskList.contains(s)) {
+		for (Task s : loadedTasks.tg) {
+			if (s.getComplDate() != null && taskList.tg.contains(s)) {
 				count++;
 			}
 				
@@ -72,14 +79,14 @@ public class Employee {
 		return count;
 		
 	}
-	public float calcPerc(HashSet <Task> taskList, HashSet <Task> loadedTasks) {
-		return 100 * ((float)calcComp(taskList, loadedTasks)) / ((float)taskList.size());
+	public float calcPerc(TaskGroup taskList, TaskGroup loadedTasks) {
+		return 100 * ((float)calcComp(taskList, loadedTasks)) / ((float)taskList.tg.size());
 	}
 	
 	//Returns the latest date a task was signed off.
 	public Date lastTrained() {
 		Date date = new Date(0);
-		for (Task s : loadedTasks) {
+		for (Task s : loadedTasks.tg) {
 			if (s.getComplDate() != null && s.getComplDate().after(date)) {
 				date = s.getComplDate();
 			}
@@ -87,19 +94,9 @@ public class Employee {
 		
 		return date;
 	}
-	
-	//Outputs chart to track progress
-	public JPanel createGraph() throws FileNotFoundException {
-		return new TBAGraph(this);
-
-	}
-	
-	//Reads Files
-	public Date readExcel(File inputFile) throws Exception {
-		FileInputStream inputStream = new FileInputStream(inputFile);		
-		return ReadExcel.loadData(inputStream, loadedTasks);
 		
-	}
+	//Reads Files
+
 	
 	public void setName(String name) {
 		this.name = name;
@@ -107,11 +104,7 @@ public class Employee {
 	
 	public String getName() {
 		return name;
-	}
-	
-	public String getRoles() {
-		return roles.toString();
-	}
+	}	
 	
 	public String getLastTrained() {
 		return DateFormat.getDateInstance().format(lastTrained());
@@ -121,10 +114,13 @@ public class Employee {
 		return datePrepared;
 	}
 	
+	protected TaskGroup getLoadedTasks() {
+		return loadedTasks;
+	}
+	
 	@Override
 	public String toString() {
 		return    "Name:\t\t\t" + name +
-				"\nRoles:\t\t\t" + roles.toString() +
 				"\nEmplID:\t\t\t" + emplID +
 				"\nDate Entered UGT:\t" + DateFormat.getDateInstance().format(dateEnteredUGT) +
 				"\nPercent Complete:\t" + String.format("%.2f", calcPerc()) + "%" +

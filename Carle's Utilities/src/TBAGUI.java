@@ -14,8 +14,11 @@ import javax.swing.GroupLayout.Alignment;
 
 @SuppressWarnings("serial")
 public class TBAGUI extends JFrame{
-	public static void main (String[] args) {
-		
+	
+	private JFileChooser fc = new JFileChooser("./");
+	
+	
+	public static void main (String[] args) {		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				TBAGUI gui = new TBAGUI();
@@ -26,6 +29,7 @@ public class TBAGUI extends JFrame{
 	}
 		
 	public TBAGUI () {		
+		fc.setFileFilter(new FileNameExtensionFilter("xls", "xlsx"));
 		setTitle("Carle's TBA Tool");
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 		setSize(400,800);
@@ -43,11 +47,11 @@ public class TBAGUI extends JFrame{
 		mntmLoadEmployee.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					JFileChooser fc = new JFileChooser("./");
-					fc.setFileFilter(new FileNameExtensionFilter("xls", "xlsx"));
+					
 					fc.showOpenDialog((Component) e.getSource());
 					if (fc.getSelectedFile() != null) {
-						addEmployee(fc.getSelectedFile());
+						Employee emp = new Employee (fc.getSelectedFile());
+						addEmployee(emp);
 					}				
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -59,6 +63,25 @@ public class TBAGUI extends JFrame{
 		
 		JMenuItem mntmLoadTaskGroup = new JMenuItem("Load Task Group");
 		mnFile.add(mntmLoadTaskGroup);
+		
+		JMenuItem mntmLoadWorkcenter = new JMenuItem("Load WorkCenter");
+		mntmLoadWorkcenter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					
+					fc.showOpenDialog((Component) e.getSource());
+					
+					if (fc.getSelectedFile() != null) {
+						WorkCenter wc = new WorkCenter(fc.getSelectedFile());
+						addWorkCenter(wc);
+					}				
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		mnFile.add(mntmLoadWorkcenter);
 		
 		JMenuItem mntmLoadDirectory = new JMenuItem("Load Directory");
 		mnFile.add(mntmLoadDirectory);
@@ -79,10 +102,15 @@ public class TBAGUI extends JFrame{
 		revalidate();
 	}
 	
-	public void addEmployee(File inputFile) {
-		try {
-			Employee emp = new Employee (inputFile);
-			JPanel empGraph = emp.createGraph();
+	public void addWorkCenter(WorkCenter wc) {
+		for (Employee emp : wc.getEmpList().values()) {
+			addEmployee(emp);
+			}		
+	}
+	
+	public void addEmployee(Employee emp) {
+		try {			
+			JPanel empGraph = new TBAGraph(emp, fc);
 			empGraph.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));
 			empGraph.add(delBtn());
 			getContentPane().add(empGraph);

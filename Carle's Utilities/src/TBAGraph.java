@@ -12,9 +12,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class TBAGraph extends JPanel implements ActionListener{
 	private Employee emp;
 	private ProgressBar graphPanel = new ProgressBar ();
+	private JFileChooser fc;
 	
-	public TBAGraph(Employee emp) throws FileNotFoundException {
+	public TBAGraph(Employee emp, JFileChooser fc) throws Exception {
 		this.emp = emp;
+		this.fc = fc;
 		addInfo();
 		addGraph();
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
@@ -22,7 +24,7 @@ public class TBAGraph extends JPanel implements ActionListener{
 		setVisible(true);
 	}
 	
-	public void addGraph() throws FileNotFoundException {
+	public void addGraph() throws Exception {
 				
 		JButton loadPBar = new JButton("Load Group");
 		loadPBar.addActionListener(this);
@@ -34,11 +36,11 @@ public class TBAGraph extends JPanel implements ActionListener{
 	}
 	
 	//Adds a phase group
-	private void addPBar() throws FileNotFoundException {
+	private void addPBar() throws Exception {
 		int answer = JOptionPane.showConfirmDialog(this, "Would you like to load a task group?", "Load a Task Group", JOptionPane.YES_NO_OPTION);
 		while (answer == JOptionPane.YES_OPTION) {
-			JFileChooser fc = new JFileChooser("./");
-			fc.setFileFilter(new FileNameExtensionFilter("xls", "xlsx"));
+			//JFileChooser fc = new JFileChooser("./");
+			//fc.setFileFilter(new FileNameExtensionFilter("xls", "xlsx"));
 			fc.showOpenDialog(this);			
 			TaskGroup tg = new TaskGroup(new FileInputStream(fc.getSelectedFile()));
 			HashMap <String, HashSet<Task>> tgList = new HashMap <String, HashSet<Task>> ();
@@ -46,7 +48,7 @@ public class TBAGraph extends JPanel implements ActionListener{
 			Iterator<Task> tgIterator = tg.tg.iterator();
 			while (tgIterator.hasNext()) {
 				Task currentTask = tgIterator.next();
-				String groupID = currentTask.getGroupID();
+				String groupID = currentTask.getEmployeeName();
 				if (!groupID.equals("Missing: Check ART File")) {
 					if (!tgList.containsKey(groupID)) {
 						System.out.println("name: " + groupID);
@@ -60,7 +62,8 @@ public class TBAGraph extends JPanel implements ActionListener{
 			Iterator<Entry<String, HashSet<Task>>> mapIterator = tgList.entrySet().iterator();
 			while (mapIterator.hasNext()) {
 				TaskGroup tgBasic = new TaskGroup(mapIterator.next().getValue());
-				graphPanel.addProgressBar(tgBasic.getName(),emp.calcComp(tgBasic.tg), tgBasic.tg.size());
+				graphPanel.addProgressBar(tgBasic.getName(),emp.calcComp(tgBasic), tgBasic.tg.size());
+				System.out.println(emp.calcComp(tgBasic));
 			}	
 			
 			answer = JOptionPane.showConfirmDialog(this, "Would you like to load another task group?", "Load a Task Group", JOptionPane.YES_NO_OPTION);
@@ -71,13 +74,13 @@ public class TBAGraph extends JPanel implements ActionListener{
 		JPanel infoPanel = new JPanel ();
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.PAGE_AXIS));
 		JLabel nameLbl = new JLabel (emp.getName());
-		JLabel roles = new JLabel ("Roles: " + emp.getRoles());
+		//JLabel roles = new JLabel ("Roles: " + emp.getRoles());
 		Date date = new Date();
 		long daysLastTrained = date.getTime()/86400000 - emp.lastTrained().getTime()/86400000;
 		JLabel lastTrained = new JLabel ("Last Training Date: " + emp.getLastTrained() + " - " + daysLastTrained);
 			
 		infoPanel.add(nameLbl);
-		infoPanel.add(roles);
+		//infoPanel.add(roles);
 		infoPanel.add(lastTrained);
 		add(infoPanel);
 	}
@@ -89,6 +92,9 @@ public class TBAGraph extends JPanel implements ActionListener{
 		try {
 			addPBar();
 		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
